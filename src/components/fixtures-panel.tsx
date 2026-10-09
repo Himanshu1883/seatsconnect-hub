@@ -163,13 +163,16 @@ export function FixturesPanel({
   onOpen: (fixture: Fixture) => void;
 }) {
   const groups = rails
-    .map((item) => ({
-      ...item,
-      fixtures:
-        item.id === "all"
-          ? fixtures
-          : fixtures.filter((fixture) => fixture.rails.includes(item.id)),
-    }))
+    .map((item) => {
+      if (item.id === "all") {
+        return { ...item, fixtures };
+      }
+      const rail = item.id;
+      return {
+        ...item,
+        fixtures: fixtures.filter((fixture) => fixture.rails.includes(rail)),
+      };
+    })
     .filter((group) => group.fixtures.length > 0);
   return (
     <section id="fixtures" className="section-band scroll-mt-24 bg-white px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
