@@ -5,6 +5,7 @@ import {
   Globe2,
   Music2,
   Plane,
+  Search,
   ShieldCheck,
   Star,
   Ticket,
@@ -81,9 +82,11 @@ const stats = [
 export function Hero({
   onFind,
   onGroups,
+  onSearch,
 }: {
   onFind: () => void;
   onGroups: () => void;
+  onSearch: () => void;
 }) {
   return (
     <section className="relative flex flex-col bg-white text-[#171717] lg:h-[calc(100dvh-4.25rem)] lg:overflow-hidden">
@@ -148,7 +151,7 @@ export function Hero({
           <ul className="mt-5 grid w-full max-w-4xl grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4 sm:gap-x-3 lg:mt-6">
             {features.map((item) => (
               <li key={item.title} className="flex items-center gap-3 text-left">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#c69b60]/50 bg-black/25 text-[#d5b078] backdrop-blur-sm">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white text-[#063246] shadow-[0_6px_18px_rgba(0,0,0,0.25)]">
                   <item.icon className="size-[18px]" strokeWidth={1.75} />
                 </span>
                 <span className="min-w-0">
@@ -166,7 +169,7 @@ export function Hero({
           <div className="mt-5 flex w-full max-w-md flex-col gap-3 sm:flex-row sm:justify-center lg:mt-6">
             <Button
               onClick={onFind}
-              className="h-12 flex-1 rounded-full border border-[#dfbb83] bg-gradient-to-r from-[#b88a4b] via-[#e8c58c] to-[#c69b60] px-6 font-tech text-sm font-semibold text-[#17130e] shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-all hover:brightness-110"
+              className="h-12 flex-1 rounded-full border border-[#063246] bg-[#063246] px-6 font-tech text-sm font-semibold text-white shadow-[0_8px_24px_rgba(6,50,70,0.35)] transition-all hover:bg-[#0a4560]"
             >
               Browse fixtures
               <ArrowRight className="ml-1 size-4" />
@@ -174,11 +177,29 @@ export function Hero({
             <Button
               variant="outline"
               onClick={onGroups}
-              className="h-12 flex-1 rounded-full border border-white/60 bg-black/15 px-6 font-tech text-sm font-semibold text-white backdrop-blur-md transition-all hover:border-[#c69b60] hover:bg-white/10 hover:text-white"
+              className="h-12 flex-1 rounded-full border border-white bg-white px-6 font-tech text-sm font-semibold text-[#063246] shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-all hover:border-[#eef3f5] hover:bg-[#eef3f5] hover:text-[#063246]"
             >
               Group bookings
             </Button>
           </div>
+
+          <button
+            type="button"
+            onClick={onSearch}
+            aria-haspopup="dialog"
+            className="group mt-4 flex h-12 w-full max-w-xl items-center gap-3 rounded-full border border-[#ece4d8] bg-white pr-1.5 pl-5 text-left shadow-[0_12px_32px_rgba(0,0,0,0.18)] transition-all hover:border-[#063246]/40 hover:shadow-[0_14px_36px_rgba(6,50,70,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#063246] lg:mt-5"
+          >
+            <Search className="size-[18px] shrink-0 text-[#063246]" />
+            <span className="min-w-0 flex-1 truncate font-tech text-sm text-[#8a847c] group-hover:text-[#5c5142]">
+              Search clubs, matches, cities…
+            </span>
+            <kbd className="hidden h-6 items-center rounded-md border border-[#e6ded2] bg-[#faf7f2] px-2 font-mono text-[10px] font-semibold text-[#6d6458] sm:inline-flex">
+              Ctrl K
+            </kbd>
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#063246] text-white transition-colors group-hover:bg-[#0a4560]">
+              <ArrowRight className="size-4" />
+            </span>
+          </button>
         </div>
       </div>
 
@@ -210,7 +231,7 @@ export function Hero({
                     <span className="mx-2.5 hidden h-8 w-px bg-[#eadfce] sm:block xl:mx-3" aria-hidden="true" />
                   ) : null}
                   <span className="flex items-center gap-2 pr-1">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#e7d3ae] bg-[#fbf8f3] text-[#c4a36a]">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#063246]/15 bg-[#eef3f5] text-[#063246]">
                       <item.icon className="size-3.5" strokeWidth={1.75} />
                     </span>
                     <span className="min-w-0">
@@ -244,7 +265,7 @@ export function Hero({
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                     style={{ objectPosition: item.imagePosition }}
                   />
-                  <span className="absolute bottom-2 left-2 flex size-7 items-center justify-center rounded-full border border-[#f0e4d0] bg-white text-[#c4a36a] shadow-sm">
+                  <span className="absolute bottom-2 left-2 flex size-7 items-center justify-center rounded-full border border-white bg-white text-[#063246] shadow-sm">
                     <item.icon className="size-3.5" strokeWidth={1.75} />
                   </span>
                 </span>
@@ -257,7 +278,7 @@ export function Hero({
                       {item.detail}
                     </span>
                   </span>
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#ece7e1] text-[#5c5142] transition-colors group-hover:border-[#c69b60] group-hover:bg-[#c69b60] group-hover:text-white">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#ece7e1] text-[#063246] transition-colors group-hover:border-[#063246] group-hover:bg-[#063246] group-hover:text-white">
                     <ArrowRight className="size-3" />
                   </span>
                 </span>

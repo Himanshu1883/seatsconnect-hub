@@ -1,125 +1,90 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FixtureDialog, LoginDialog } from "@/components/fixture-dialog";
-import { FixturesPanel } from "@/components/fixtures-panel";
-import { Hero } from "@/components/hero";
+import { Faqs, Reviews, SocialEdit } from "@/components/experience/community";
+import { CollectionDialog, SocialDialog } from "@/components/experience/dialogs";
 import {
-  Circle,
-  Closing,
-  Clubs,
-  Competitions,
-  GiftAndGroups,
-  HowItWorks,
-  Partnerships,
-  PopularSports,
-} from "@/components/page-sections";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
-import { fixtures as catalog, type Currency, type Fixture, type Sport } from "@/lib/catalog";
+  CategoryRow,
+  Collections,
+  EventFinder,
+  filterCollections,
+  type Filter,
+} from "@/components/experience/discover";
+import { Difference, Hospitality, SpecialistServices, Weekend } from "@/components/experience/editorial";
+import { CollectionEvents } from "@/components/experience/events";
+import { Enquiry, Footer } from "@/components/experience/enquiry";
+import { HeroCarousel } from "@/components/experience/hero-carousel";
+import { SiteNav } from "@/components/experience/site-nav";
+import type { Collection, ExperienceType, Service } from "@/lib/experiences";
+import { useDebouncedValue } from "@/lib/use-debounced-value";
+
+function scrollToId(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export function HomePage() {
   const [query, setQuery] = useState("");
-  const [competition, setCompetition] = useState("");
-  const [sport, setSport] = useState<Sport | "">("");
-  const [currency, setCurrency] = useState<Currency>("usd");
-  const [openFixture, setOpenFixture] = useState<Fixture | null>(null);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [openCollection, setOpenCollection] = useState<Collection | null>(null);
+  const [socialCaption, setSocialCaption] = useState<string | null>(null);
+  const [event, setEvent] = useState("");
+  const [service, setService] = useState<Service>("Official tickets");
 
-  const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return catalog.filter((fixture) => {
-      if (sport && fixture.sport !== sport) return false;
-      if (competition && !fixture.competition.toLowerCase().includes(competition.toLowerCase())) {
-        return false;
-      }
-      if (!needle) return true;
-      const haystack = [
-        fixture.home,
-        fixture.away,
-        fixture.city,
-        fixture.venue,
-        fixture.competition,
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(needle);
-    });
-  }, [competition, query, sport]);
+  const debouncedQuery = useDebouncedValue(query, 200);
+  const items = useMemo(() => filterCollections(filter, debouncedQuery), [filter, debouncedQuery]);
 
-  function scrollTo(hash: string) {
-    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function browse(target: {
-    query?: string;
-    competition?: string;
-    sport?: Sport;
-    hash?: string;
-  }) {
-    if (target.query != null) setQuery(target.query);
-    else if (target.competition || target.sport) setQuery("");
-    if (target.competition != null) setCompetition(target.competition);
-    else if (target.query || target.sport) setCompetition("");
-    if (target.sport) {
-      setSport(target.sport);
-    } else if (target.query || target.competition) {
-      setSport("");
-    }
-    scrollTo(target.hash ?? "fixtures");
+  function selectCategory(type: ExperienceType) {
+    setQuery("");
+    setFilter(type);
   }
 
   return (
-    <div id="top" className="bg-sand">
-      <SiteHeader
-        signedIn={signedIn}
-        onLogin={() => setLoginOpen(true)}
-        onSignOut={() => setSignedIn(null)}
-        onBrowse={browse}
-      />
-      <main className="pt-[4.25rem]">
-        <Hero onFind={() => scrollTo("fixtures")} onGroups={() => scrollTo("groups")} />
-        <FixturesPanel
-          fixtures={visible}
+    <div id="top" className="bg-cream text-[15px] leading-[1.6] text-ink">
+      <SiteNav onCategory={selectCategory} />
+      <main>
+        <HeroCarousel onCategory={selectCategory} />
+        <EventFinder
           query={query}
-          competition={competition}
-          currency={currency}
-          onQuery={(value) => {
-            setQuery(value);
-            setSport("");
+          filter={filter}
+          onQuery={setQuery}
+          onFilter={setFilter}
+          onSubmit={() => scrollToId("discover")}
+        />
+        <CategoryRow
+          onPick={(type) => {
+            selectCategory(type);
+            scrollToId("discover");
           }}
-          onCompetition={setCompetition}
-          onCurrency={setCurrency}
-          onOpen={setOpenFixture}
         />
-        <HowItWorks />
-        <Competitions
-          onPick={(nextCompetition, nextSport) =>
-            browse({ competition: nextCompetition, sport: nextSport, hash: "fixtures" })
-          }
+        <Collections filter={filter} items={items} onFilter={setFilter} onOpen={setOpenCollection} />
+        <CollectionEvents
+          onEnquire={(title) => {
+            setEvent(title);
+            setService("Official tickets");
+            scrollToId("request");
+          }}
         />
-        <Clubs onPick={(club) => browse({ query: club, hash: "fixtures" })} />
-        <PopularSports onPick={(next) => browse({ sport: next, hash: "fixtures" })} />
-        <Partnerships />
-        <Circle onBrowse={() => scrollTo("fixtures")} />
-        <GiftAndGroups />
-        <Closing onFind={() => scrollTo("fixtures")} />
+        <Weekend onService={setService} onDestination={(place) => setEvent(`${place} — event request`)} />
+        <Hospitality onService={setService} />
+        <SpecialistServices onService={setService} />
+        <Difference />
+        <SocialEdit onOpen={setSocialCaption} />
+        <Reviews />
+        <Faqs />
+        <Enquiry event={event} service={service} onEvent={setEvent} onService={setService} />
       </main>
-      <SiteFooter />
-      <FixtureDialog
-        fixture={openFixture}
-        currency={currency}
-        onClose={() => setOpenFixture(null)}
-      />
-      <LoginDialog
-        open={loginOpen}
-        onClose={() => setLoginOpen(false)}
-        onSuccess={(email) => {
-          setSignedIn(email);
-          setLoginOpen(false);
+      <Footer />
+
+      <CollectionDialog
+        item={openCollection}
+        onClose={() => setOpenCollection(null)}
+        onEnquire={(item) => {
+          setEvent(item.title);
+          setOpenCollection(null);
+          window.setTimeout(() => scrollToId("request"), 200);
         }}
       />
+      <SocialDialog caption={socialCaption} onClose={() => setSocialCaption(null)} />
     </div>
   );
 }

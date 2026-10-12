@@ -7,10 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-mona), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: "Mona Sans Variable", var(--font-inter), ui-sans-serif, sans-serif;
-  --font-tech: "Mona Sans Variable", var(--font-inter), ui-sans-serif, sans-serif;
+  --font-heading: var(--font-mona), ui-sans-serif, sans-serif;
+  --font-tech: var(--font-mona), ui-sans-serif, sans-serif;
   --color-brand-orange: #c69f68;
   --color-brand-orange-hover: #b38c56;
   --color-brand-gold: #cda670;
@@ -22,6 +22,13 @@
   --color-ink: #1a1512;
   --color-cream: #faf7f3;
   --color-sand: #f3ebe3;
+  --color-paper: #fffdfa;
+  --color-line: #e8d9cc;
+  --color-line-strong: #dacbbd;
+  --color-taupe: #756d65;
+  --color-gold-deep: #96703e;
+  --color-gold-soft: #e5c697;
+  --color-night: #120f0d;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -138,7 +145,16 @@
   }
   html {
     @apply scroll-smooth font-sans;
+    scroll-padding-top: 100px;
   }
+}
+
+.over {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .font-tech {
@@ -261,7 +277,26 @@
   }
 }
 
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
   .hero-fade-up,
   .text-shine-blade,
   .live-ping {

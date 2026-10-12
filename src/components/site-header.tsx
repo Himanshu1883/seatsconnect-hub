@@ -234,10 +234,17 @@ export function SiteHeader({
               </button>
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" className="h-auto flex-1 rounded-full font-tech" onClick={onLogin}>
+              <Button
+                variant="outline"
+                className="h-auto flex-1 rounded-full border-brand-cta/20 bg-white py-2.5 font-tech font-semibold text-brand-cta hover:bg-[#eef3f5] hover:text-brand-cta"
+                onClick={onLogin}
+              >
                 {signedIn ? "Account" : "Login"}
               </Button>
-              <Button className="h-auto flex-1 rounded-full font-tech" onClick={() => go({ hash: "fixtures" })}>
+              <Button
+                className="h-auto flex-1 rounded-full py-2.5 font-tech font-semibold hover:bg-brand-cta-hover"
+                onClick={() => go({ hash: "fixtures" })}
+              >
                 Find tickets
               </Button>
             </div>

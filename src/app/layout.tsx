@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
-import "@fontsource-variable/mona-sans";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const monaSans = localFont({
+  src: "./fonts/MonaSans-Variable.woff2",
+  weight: "200 900",
+  style: "normal",
+  display: "swap",
+  variable: "--font-mona",
 });
 
 const geistMono = Geist_Mono({
@@ -15,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Football, Rugby & F1 Tickets | SeatsConnect",
+  title: "SeatsConnect — Official Tickets & Hospitality",
   description:
-    "Official sports tickets and matchday hospitality for the Premier League, La Liga, rugby, tennis and Formula 1. Trusted by fans in over 100 countries.",
+    "Discover official tickets, premium hospitality and specialist VIP event services worldwide with SeatsConnect.",
   icons: { icon: "/seatsconnect-mark.png" },
 };
 
@@ -25,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${monaSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-sand text-brand-dark">{children}</body>
     </html>
