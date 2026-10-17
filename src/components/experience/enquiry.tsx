@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowUpRight, Check, Copy } from "lucide-react";
 import { footerLinks, services, type Service } from "@/lib/experiences";
 import { Icon3D, type Icon3DName } from "./icons-3d";
@@ -181,9 +182,9 @@ export function Footer() {
       <Wrap>
         <div className="flex flex-col justify-between gap-[35px] md:flex-row">
           <div>
-            <a href="#top" aria-label="SeatsConnect home">
+            <Link href="/" aria-label="SeatsConnect home">
               <Logo dark withMark={false} />
-            </a>
+            </Link>
             <p className="mt-4 max-w-[380px] leading-relaxed text-[#b6a99a]">
               Official tickets and hospitality. International event experiences, supported by a
               personal ticket specialist.
@@ -191,9 +192,9 @@ export function Footer() {
           </div>
           <div className="flex flex-wrap gap-x-7 gap-y-3">
             {footerLinks.map((link) => (
-              <a key={link.label} href={link.href} className="transition-colors hover:text-white">
+              <Link key={link.label} href={link.href} className="transition-colors hover:text-white">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

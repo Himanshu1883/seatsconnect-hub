@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { navLinks, quickLinks, type ExperienceType } from "@/lib/experiences";
 import { btnPrimarySoft } from "./ui";
@@ -40,49 +41,49 @@ export function Logo({ dark = false, withMark = true }: { dark?: boolean; withMa
   );
 }
 
-export function SiteNav({ onCategory }: { onCategory: (type: ExperienceType) => void }) {
+export function SiteNav({ onCategory }: { onCategory?: (type: ExperienceType) => void }) {
   return (
     <>
-      <div className="bg-ink px-4 py-2.5 text-center text-[11px] tracking-[0.8px] text-line uppercase">
+      <div className="bg-ink px-4 py-1.5 text-center text-[11px] tracking-[0.8px] text-line uppercase [@media(min-height:901px)]:py-2.5">
         Official tickets &amp; hospitality · International events · Specialist personal service
       </div>
 
       <header className="sticky top-0 z-40 border-b border-line bg-cream">
-        <div className="mx-auto flex h-[75px] max-w-[1400px] items-center justify-between gap-[25px] px-[5%] md:h-[86px]">
-          <a href="#top" aria-label="SeatsConnect home">
+        <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between gap-[25px] px-[5%] md:h-[76px] [@media(min-height:901px)]:h-[75px] [@media(min-height:901px)]:md:h-[86px]">
+          <Link href="/" aria-label="SeatsConnect home">
             <Logo />
-          </a>
+          </Link>
           <nav className="flex items-center gap-[26px] text-[13px] font-bold text-ink">
-            {navLinks.map((link) => (
-              <a
+            {navLinks.map((link, index) => (
+              <Link
                 key={link.href}
                 href={link.href}
-                className="hidden transition-colors hover:text-brand-cta md:inline"
+                className={cn("hidden transition-colors hover:text-brand-cta", index === 0 ? "md:inline" : "xl:inline")}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
-            <a href="#request" className={cn(btnPrimarySoft, "max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[11px]")}>
+            <Link href="/#request" className={cn(btnPrimarySoft, "max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[11px]")}>
               Request an event
               <ArrowUpRight className="size-3.5" />
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
 
       <nav
         aria-label="Quick event navigation"
-        className="flex justify-start gap-7 overflow-x-auto border-b border-line bg-paper px-[5%] py-[17px] text-[13px] font-medium text-ink [scrollbar-width:none] lg:justify-between lg:gap-5 [&::-webkit-scrollbar]:hidden"
+        className="fold-quick flex justify-start gap-7 overflow-x-auto border-b border-line bg-paper px-[5%] py-3 text-[13px] font-medium text-ink [scrollbar-width:none] lg:justify-between lg:gap-5 [@media(min-height:901px)]:py-[17px] [&::-webkit-scrollbar]:hidden"
       >
         {quickLinks.map(({ label, href, category }) => (
-          <a
+          <Link
             key={label}
             href={href}
-            onClick={category ? () => onCategory(category) : undefined}
+            onClick={category && onCategory ? () => onCategory(category) : undefined}
             className="whitespace-nowrap transition-colors hover:text-brand-cta"
           >
             {label}
-          </a>
+          </Link>
         ))}
       </nav>
     </>

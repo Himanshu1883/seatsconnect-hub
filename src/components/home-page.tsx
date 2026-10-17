@@ -50,12 +50,12 @@ export function HomePage() {
           onFilter={setFilter}
           onSubmit={() => scrollToId("discover")}
         />
-        <CategoryRow
+        {/* <CategoryRow
           onPick={(type) => {
             selectCategory(type);
             scrollToId("discover");
           }}
-        />
+        /> */}
         <Collections filter={filter} items={items} onFilter={setFilter} onOpen={setOpenCollection} />
         <CollectionEvents
           onEnquire={(title) => {

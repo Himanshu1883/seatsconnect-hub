@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight, CalendarDays, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { collections, type EventItem } from "@/lib/experiences";
 import { Reveal } from "./reveal";
@@ -9,12 +10,11 @@ import { SectionHead, Wrap } from "./ui";
 import { cn } from "cn";
 
 function EventCard({ event, onEnquire }: { event: EventItem; onEnquire: (title: string) => void }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onEnquire(event.title)}
-      className="group flex h-full w-full flex-col rounded-[28px] border border-line bg-paper p-2 text-left shadow-[0_1px_2px_rgba(26,21,18,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_60px_-28px_rgba(26,21,18,0.4)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-cta"
-    >
+  const className =
+    "group flex h-full w-full flex-col rounded-[28px] border border-line bg-paper p-2 text-left shadow-[0_1px_2px_rgba(26,21,18,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_60px_-28px_rgba(26,21,18,0.4)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-cta";
+
+  const inner = (
+    <>
       <span className="relative block h-[190px] overflow-hidden rounded-[22px] bg-[#283f51]">
         <Image
           src={event.image}
@@ -38,12 +38,28 @@ function EventCard({ event, onEnquire }: { event: EventItem; onEnquire: (title: 
           {event.place}
         </span>
         <span className="mt-auto flex items-center justify-between border-t border-line pt-3.5">
-          <span className="font-tech text-[13px] font-bold text-brand-cta">Enquire</span>
+          <span className="font-tech text-[13px] font-bold text-brand-cta">
+            {event.href ? "View tickets" : "Enquire"}
+          </span>
           <span className="flex size-9 items-center justify-center rounded-full bg-brand-cta text-white shadow-[0_8px_18px_-8px_rgba(6,50,70,0.8)] transition-transform group-hover:rotate-45">
             <ArrowUpRight className="size-4" />
           </span>
         </span>
       </span>
+    </>
+  );
+
+  if (event.href) {
+    return (
+      <Link href={event.href} className={className}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={() => onEnquire(event.title)} className={className}>
+      {inner}
     </button>
   );
 }
@@ -142,12 +158,27 @@ export function CollectionEvents({ onEnquire }: { onEnquire: (title: string) => 
                 <div>
                   <span className="over text-gold-deep">{collection.place}</span>
                   <h3 className="mt-2 font-tech text-[26px] font-bold tracking-[-0.8px] text-ink md:text-[30px]">
-                    {collection.title}
+                    {collection.href ? (
+                      <Link href={collection.href} className="transition-colors hover:text-brand-cta">
+                        {collection.title}
+                      </Link>
+                    ) : (
+                      collection.title
+                    )}
                   </h3>
                 </div>
-                <span className="shrink-0 rounded-full bg-sand px-3 py-1 font-tech text-xs font-bold text-brand-cta">
-                  {collection.events.length} events
-                </span>
+                {collection.href ? (
+                  <Link
+                    href={collection.href}
+                    className="shrink-0 rounded-full bg-sand px-3 py-1 font-tech text-xs font-bold text-brand-cta transition-colors hover:bg-brand-cta hover:text-white"
+                  >
+                    View all tickets
+                  </Link>
+                ) : (
+                  <span className="shrink-0 rounded-full bg-sand px-3 py-1 font-tech text-xs font-bold text-brand-cta">
+                    {collection.events.length} events
+                  </span>
+                )}
               </div>
               <EventRow events={collection.events} label={collection.title} onEnquire={onEnquire} />
             </Reveal>

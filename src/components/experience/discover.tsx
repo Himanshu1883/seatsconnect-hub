@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import {
   collections,
   experienceOptions,
+  resolveHomeSearch,
   trustPoints,
   type Collection,
   type ExperienceType,
@@ -40,6 +43,8 @@ export function EventFinder({
   onFilter: (value: Filter) => void;
   onSubmit: () => void;
 }) {
+  const router = useRouter();
+
   return (
     <Wrap>
       <form
@@ -47,9 +52,14 @@ export function EventFinder({
         role="search"
         onSubmit={(event) => {
           event.preventDefault();
+          const destination = resolveHomeSearch(query, filter);
+          if (destination) {
+            router.push(destination);
+            return;
+          }
           onSubmit();
         }}
-        className="relative z-10 -mt-10 grid items-end gap-4 rounded-[24px] border border-line bg-paper p-5 shadow-[0_24px_60px_-20px_rgba(26,21,18,0.28)] min-[501px]:grid-cols-[1fr_150px] md:grid-cols-[1fr_220px_auto] md:gap-6 md:p-7"
+        className="fold-search relative z-10 -mt-8 grid items-end gap-4 rounded-[24px] border border-line bg-paper p-4 shadow-[0_24px_60px_-20px_rgba(26,21,18,0.28)] min-[501px]:grid-cols-[1fr_150px] md:grid-cols-[1fr_220px_auto] md:gap-5 md:p-5 [@media(min-height:901px)]:-mt-10 [@media(min-height:901px)]:gap-6 [@media(min-height:901px)]:p-7"
       >
         <div>
           <label htmlFor="query" className="mb-2 block text-[11px] font-semibold tracking-[1px] text-taupe uppercase">
@@ -88,13 +98,13 @@ export function EventFinder({
         </button>
       </form>
 
-      <div className="grid grid-cols-1 gap-6 border-b border-line py-10 min-[501px]:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div className="grid grid-cols-1 gap-4 border-b border-line py-5 min-[501px]:grid-cols-2 lg:grid-cols-4 lg:gap-5 lg:py-6">
         {trustPoints.map((point, index) => (
-          <Reveal key={point.title} delay={index * 90} className="flex items-center gap-4">
-            <Icon3D name={trustIcons[index]} className="size-[52px]" />
+          <Reveal key={point.title} delay={index * 90} className="flex items-center gap-2.5">
+            <Icon3D name={trustIcons[index]} className="size-9" />
             <div>
-              <b className="block font-tech text-[15px] text-ink">{point.title}</b>
-              <span className="mt-0.5 block text-[13px] leading-snug text-taupe">{point.detail}</span>
+              <b className="block font-tech text-[13px] leading-tight text-ink">{point.title}</b>
+              <span className="mt-0.5 block text-[11px] leading-snug text-taupe">{point.detail}</span>
             </div>
           </Reveal>
         ))}
@@ -144,9 +154,18 @@ export function CategoryRow({ onPick }: { onPick: (type: ExperienceType) => void
   );
 }
 
+function exploreLabel(title: string) {
+  if (title === "Concerts & entertainment") return "Explore concert tickets";
+  if (title === "More sporting occasions") return "Explore more sports tickets";
+  return `Explore ${title.toLowerCase()} tickets`;
+}
+
 function CollectionCard({ item, onOpen }: { item: Collection; onOpen: (item: Collection) => void }) {
-  return (
-    <article className="group flex h-full flex-col rounded-[28px] border border-line bg-paper p-2 shadow-[0_1px_2px_rgba(26,21,18,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:border-line-strong hover:shadow-[0_28px_60px_-28px_rgba(26,21,18,0.4)]">
+  const cardClass =
+    "group flex h-full flex-col rounded-[28px] border border-line bg-paper p-2 shadow-[0_1px_2px_rgba(26,21,18,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:border-line-strong hover:shadow-[0_28px_60px_-28px_rgba(26,21,18,0.4)]";
+
+  const media = (
+    <>
       <div className="relative h-[230px] overflow-hidden rounded-[22px] bg-[#283f51]">
         <Image
           src={item.image}
@@ -163,18 +182,28 @@ function CollectionCard({ item, onOpen }: { item: Collection; onOpen: (item: Col
         <span className="text-[11px] font-semibold tracking-[1px] text-taupe uppercase">{item.place}</span>
         <h3 className="mt-2 mb-2 font-tech text-[23px] font-bold tracking-[-0.6px] text-ink">{item.title}</h3>
         <p className="text-sm leading-[1.65] text-taupe">{item.desc}</p>
-        <button
-          type="button"
-          onClick={() => onOpen(item)}
-          className="mt-auto flex w-full items-center justify-between border-t border-line pt-4 text-left font-tech text-[13px] font-bold text-brand-cta transition-colors hover:text-brand-cta-hover"
-        >
-          <span className="mt-1">Explore options</span>
+        <span className="mt-auto flex w-full items-center justify-between border-t border-line pt-4 text-left font-tech text-[13px] font-bold text-brand-cta transition-colors group-hover:text-brand-cta-hover">
+          <span className="mt-1">{item.href ? exploreLabel(item.title) : "Explore options"}</span>
           <span className="mt-1 flex size-9 items-center justify-center rounded-full bg-brand-cta text-white shadow-[0_8px_18px_-8px_rgba(6,50,70,0.8)] transition-transform group-hover:rotate-45">
             <ArrowUpRight className="size-4" />
           </span>
-        </button>
+        </span>
       </div>
-    </article>
+    </>
+  );
+
+  if (item.href) {
+    return (
+      <Link href={item.href} className={cardClass}>
+        {media}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={() => onOpen(item)} className={`${cardClass} text-left`}>
+      {media}
+    </button>
   );
 }
 
@@ -190,7 +219,7 @@ export function Collections({
   onOpen: (item: Collection) => void;
 }) {
   return (
-    <section id="discover" className="py-[60px] md:py-[84px]">
+    <section id="discover" className="py-[60px] md:py-[30px]">
       <Wrap>
         <SectionHead
           eyebrow="Explore the collections"

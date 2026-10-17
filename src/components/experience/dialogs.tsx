@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { Dialog } from "@base-ui/react/dialog";
 import { ArrowUpRight, X } from "lucide-react";
 import type { Collection } from "@/lib/experiences";
@@ -72,17 +73,24 @@ export function CollectionDialog({
       </ul>
       <p className="mt-5 text-[13px] text-taupe">Collection preview. No live inventory or checkout is connected.</p>
       <div className="mt-7 flex flex-wrap gap-3">
-        <a
-          href="#request"
-          className={btnPrimarySoft}
-          onClick={(event) => {
-            event.preventDefault();
-            if (item) onEnquire(item);
-          }}
-        >
-          Enquire about this event
-          <ArrowUpRight className="size-4" />
-        </a>
+        {item?.href ? (
+          <Link href={item.href} className={btnPrimarySoft} onClick={onClose}>
+            View tickets
+            <ArrowUpRight className="size-4" />
+          </Link>
+        ) : (
+          <a
+            href="#request"
+            className={btnPrimarySoft}
+            onClick={(event) => {
+              event.preventDefault();
+              if (item) onEnquire(item);
+            }}
+          >
+            Enquire about this event
+            <ArrowUpRight className="size-4" />
+          </a>
+        )}
         <Dialog.Close className={closeBtn}>Close</Dialog.Close>
       </div>
     </Shell>

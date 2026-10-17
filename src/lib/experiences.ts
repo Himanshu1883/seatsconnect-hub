@@ -1,3 +1,5 @@
+import { collectionEventImage } from "./experience-images";
+
 export type ExperienceType = "football" | "motorsport" | "tennis" | "music" | "rugby" | "other";
 
 export type EventItem = {
@@ -6,6 +8,7 @@ export type EventItem = {
   place: string;
   when: string;
   image: string;
+  href?: string;
 };
 
 export type Collection = {
@@ -16,6 +19,7 @@ export type Collection = {
   tag: string;
   desc: string;
   events: EventItem[];
+  href?: string;
 };
 
 const shot = (id: string) =>
@@ -26,6 +30,8 @@ export const photos = {
   racing: "/experiences/racing.jpg",
   concert: "/experiences/concert.jpg",
   tennis: "/experiences/tennis.jpg",
+  rugby: "/experiences/rugby.jpg",
+  more: "/experiences/more-sports.jpg",
 };
 
 export const services = [
@@ -39,20 +45,26 @@ export const services = [
 export type Service = (typeof services)[number];
 
 export const navLinks = [
-  { label: "Explore events", href: "#discover" },
-  { label: "Hospitality", href: "#hospitality" },
-  { label: "VIP & concierge", href: "#services" },
-  { label: "Why SeatsConnect", href: "#why" },
+  { label: "Football tickets", href: "/football" },
+  { label: "Explore events", href: "/#discover" },
+  { label: "Hospitality", href: "/#hospitality" },
+  { label: "VIP & concierge", href: "/#services" },
+  { label: "Why SeatsConnect", href: "/#why" },
 ];
 
 export const quickLinks: { label: string; href: string; category?: ExperienceType }[] = [
-  { label: "Football", href: "#discover", category: "football" },
-  { label: "Formula 1", href: "#discover", category: "motorsport" },
-  { label: "Tennis", href: "#discover", category: "tennis" },
-  { label: "Concerts & entertainment", href: "#discover", category: "music" },
-  { label: "Hospitality & private boxes", href: "#hospitality" },
-  { label: "VIP & concierge", href: "#services" },
-  { label: "Reviews", href: "#reviews" },
+  { label: "Football", href: "/football" },
+  { label: "Premier League", href: "/football/premier-league" },
+  { label: "Champions League", href: "/football/champions-league" },
+  { label: "Clubs", href: "/football/clubs" },
+  { label: "Formula 1", href: "/formula-1" },
+  { label: "Tennis", href: "/tennis" },
+  { label: "Concerts", href: "/concerts" },
+  { label: "Rugby", href: "/rugby" },
+  { label: "More sports", href: "/more-sports" },
+  { label: "Hospitality & private boxes", href: "/#hospitality" },
+  { label: "VIP & concierge", href: "/#services" },
+  { label: "Reviews", href: "/#reviews" },
 ];
 
 export const slides = [
@@ -76,11 +88,63 @@ export const slides = [
   },
 ];
 
-export const popularSearches: { label: string; category: ExperienceType }[] = [
-  { label: "Premier League", category: "football" },
-  { label: "Formula 1", category: "motorsport" },
-  { label: "Concerts", category: "music" },
+export const popularSearches: { label: string; category: ExperienceType; href?: string }[] = [
+  { label: "Premier League", category: "football", href: "/football/premier-league" },
+  { label: "Formula 1", category: "motorsport", href: "/formula-1" },
+  { label: "Wimbledon", category: "tennis", href: "/tennis/grand-slams/wimbledon-finals-weekend" },
+  { label: "Concerts", category: "music", href: "/concerts" },
 ];
+
+const footballSearchRoutes: { needle: string; href: string }[] = [
+  { needle: "manchester united", href: "/football/clubs/manchester-united" },
+  { needle: "man united", href: "/football/clubs/manchester-united" },
+  { needle: "manchester city", href: "/football/clubs/manchester-city" },
+  { needle: "man city", href: "/football/clubs/manchester-city" },
+  { needle: "tottenham", href: "/football/clubs/tottenham-hotspur" },
+  { needle: "spurs", href: "/football/clubs/tottenham-hotspur" },
+  { needle: "champions league", href: "/football/champions-league" },
+  { needle: "europa league", href: "/football/europa-league" },
+  { needle: "premier league", href: "/football/premier-league" },
+  { needle: "la liga", href: "/football/la-liga" },
+  { needle: "serie a", href: "/football/serie-a" },
+  { needle: "bundesliga", href: "/football/bundesliga" },
+  { needle: "ligue 1", href: "/football/ligue-1" },
+  { needle: "championship", href: "/football/championship" },
+  { needle: "liverpool", href: "/football/clubs/liverpool" },
+  { needle: "arsenal", href: "/football/clubs/arsenal" },
+  { needle: "chelsea", href: "/football/clubs/chelsea" },
+  { needle: "premier", href: "/football/premier-league" },
+  { needle: "champions", href: "/football/champions-league" },
+  { needle: "football", href: "/football" },
+  { needle: "formula 1", href: "/formula-1" },
+  { needle: "formula1", href: "/formula-1" },
+  { needle: "monaco", href: "/formula-1/formula-1-world-championship/monaco-grand-prix" },
+  { needle: "silverstone", href: "/formula-1/formula-1-world-championship/british-grand-prix" },
+  { needle: "wimbledon", href: "/tennis/grand-slams/wimbledon-finals-weekend" },
+  { needle: "roland", href: "/tennis/grand-slams/roland-garros-finals-weekend" },
+  { needle: "tennis", href: "/tennis" },
+  { needle: "concert", href: "/concerts" },
+  { needle: "wembley", href: "/concerts/stadium-tours/wembley-stadium-tour" },
+  { needle: "glastonbury", href: "/concerts/stadium-tours/glastonbury-festival" },
+  { needle: "rugby", href: "/rugby" },
+  { needle: "six nations", href: "/rugby/six-nations" },
+  { needle: "nfl", href: "/more-sports/nfl-international/nfl-london-at-wembley" },
+  { needle: "boxing", href: "/more-sports/world-title-boxing/world-title-fight-las-vegas" },
+  { needle: "ashes", href: "/more-sports/the-ashes/australia-cricket-vs-england-cricket" },
+];
+
+export function resolveHomeSearch(query: string, filter: ExperienceType | "all"): string | null {
+  const q = query.trim().toLowerCase();
+  const hit = footballSearchRoutes.find((item) => q.includes(item.needle));
+  if (hit) return hit.href;
+  if (filter === "football") return "/football";
+  if (filter === "motorsport") return "/formula-1";
+  if (filter === "tennis") return "/tennis";
+  if (filter === "music") return "/concerts";
+  if (filter === "rugby") return "/rugby";
+  if (filter === "other") return "/more-sports";
+  return null;
+}
 
 export const experienceOptions: { value: ExperienceType | "all"; label: string; tab: string }[] = [
   { value: "all", label: "All experiences", tab: "All experiences" },
@@ -107,12 +171,13 @@ export const collections: Collection[] = [
     image: photos.stadium,
     tag: "Tickets & hospitality",
     desc: "Premier League, European club football and international tournaments.",
+    href: "/football",
     events: [
-      { id: "pl", title: "Premier League", place: "England", when: "Aug 2026 – May 2027", image: shot("photo-1522778119026-d647f0596c20") },
-      { id: "ucl", title: "UEFA Champions League", place: "Europe", when: "Knockout stages 2027", image: shot("photo-1489944440615-453fc2b6a9a9") },
-      { id: "laliga", title: "La Liga", place: "Spain", when: "2026/27 season", image: shot("photo-1574629810360-7efbbe195018") },
-      { id: "seriea", title: "Serie A", place: "Italy", when: "2026/27 season", image: shot("photo-1570498839593-e565b39455fc") },
-      { id: "bundesliga", title: "Bundesliga", place: "Germany", when: "2026/27 season", image: shot("photo-1459865264687-595d652de67e") },
+      { id: "pl", title: "Premier League", place: "England", when: "Aug 2026 – May 2027", image: "/matches/liverpool-vs-arsenal.jpg", href: "/football/premier-league" },
+      { id: "ucl", title: "UEFA Champions League", place: "Europe", when: "Knockout stages 2027", image: "/matches/bayern-munich-vs-arsenal.jpg", href: "/football/champions-league" },
+      { id: "laliga", title: "La Liga", place: "Spain", when: "2026/27 season", image: "/matches/real-madrid-vs-getafe.jpg", href: "/football/la-liga" },
+      { id: "seriea", title: "Serie A", place: "Italy", when: "2026/27 season", image: "/matches/juventus-vs-lazio.jpg", href: "/football/serie-a" },
+      { id: "bundesliga", title: "Bundesliga", place: "Germany", when: "2026/27 season", image: "/matches/bayer-leverkusen-vs-freiburg.jpg", href: "/football/bundesliga" },
       { id: "worldcup", title: "FIFA World Cup", place: "USA, Canada & Mexico", when: "Jun – Jul 2026", image: shot("photo-1431324155629-1a6deb1dec8d") },
     ],
   },
@@ -123,13 +188,14 @@ export const collections: Collection[] = [
     image: photos.racing,
     tag: "Race weekend experiences",
     desc: "Grandstand tickets and official hospitality across the race calendar.",
+    href: "/formula-1",
     events: [
-      { id: "monaco", title: "Monaco Grand Prix", place: "Monte Carlo", when: "Jun 2026", image: shot("photo-1503376780353-7e6692767b70") },
-      { id: "silverstone", title: "British Grand Prix", place: "Silverstone", when: "Jul 2026", image: shot("photo-1568605117036-5fe5e7bab0b7") },
-      { id: "monza", title: "Italian Grand Prix", place: "Monza", when: "Sep 2026", image: shot("photo-1541447271487-09612b3f49f7") },
-      { id: "spa", title: "Belgian Grand Prix", place: "Spa-Francorchamps", when: "Aug 2026", image: shot("photo-1517153295259-74eb0b416cee") },
-      { id: "abudhabi", title: "Abu Dhabi Grand Prix", place: "Yas Marina", when: "Dec 2026", image: shot("photo-1533106497176-45ae19e68ba2") },
-      { id: "austin", title: "United States Grand Prix", place: "Austin", when: "Oct 2026", image: shot("photo-1511919884226-fd3cad34687c") },
+      { id: "monaco", title: "Monaco Grand Prix", place: "Monte Carlo", when: "Jun 2026", image: collectionEventImage("monaco"), href: "/formula-1/formula-1-world-championship/monaco-grand-prix" },
+      { id: "silverstone", title: "British Grand Prix", place: "Silverstone", when: "Jul 2026", image: collectionEventImage("silverstone"), href: "/formula-1/formula-1-world-championship/british-grand-prix" },
+      { id: "monza", title: "Italian Grand Prix", place: "Monza", when: "Sep 2026", image: collectionEventImage("monza"), href: "/formula-1/formula-1-world-championship/italian-grand-prix" },
+      { id: "spa", title: "Belgian Grand Prix", place: "Spa-Francorchamps", when: "Aug 2026", image: collectionEventImage("spa"), href: "/formula-1/formula-1-world-championship/belgian-grand-prix" },
+      { id: "abudhabi", title: "Abu Dhabi Grand Prix", place: "Yas Marina", when: "Dec 2026", image: collectionEventImage("abudhabi"), href: "/formula-1/formula-1-world-championship/abu-dhabi-grand-prix" },
+      { id: "austin", title: "United States Grand Prix", place: "Austin", when: "Oct 2026", image: collectionEventImage("austin") },
     ],
   },
   {
@@ -139,13 +205,14 @@ export const collections: Collection[] = [
     image: photos.tennis,
     tag: "Courtside occasions",
     desc: "Explore major tournaments, premium seating and hospitality enquiries.",
+    href: "/tennis",
     events: [
-      { id: "wimbledon", title: "Wimbledon", place: "London", when: "Jun – Jul 2026", image: shot("photo-1622279457486-62dcc4a431d6") },
-      { id: "rolandgarros", title: "Roland-Garros", place: "Paris", when: "May – Jun 2026", image: shot("photo-1554068865-24cecd4e34b8") },
-      { id: "usopen", title: "US Open", place: "New York", when: "Aug – Sep 2026", image: shot("photo-1595435934249-5df7ed86e1c0") },
-      { id: "ausopen", title: "Australian Open", place: "Melbourne", when: "Jan 2027", image: shot("photo-1626224583764-f87db24ac4ea") },
-      { id: "atpfinals", title: "ATP Finals", place: "Turin", when: "Nov 2026", image: shot("photo-1587280501635-68a0e82cd5ff") },
-      { id: "lavercup", title: "Laver Cup", place: "Europe", when: "Sep 2026", image: shot("photo-1542144582-1ba00456b5e3") },
+      { id: "wimbledon", title: "Wimbledon", place: "London", when: "Jun – Jul 2026", image: collectionEventImage("wimbledon"), href: "/tennis/grand-slams/wimbledon-finals-weekend" },
+      { id: "rolandgarros", title: "Roland-Garros", place: "Paris", when: "May – Jun 2026", image: collectionEventImage("rolandgarros"), href: "/tennis/grand-slams/roland-garros-finals-weekend" },
+      { id: "usopen", title: "US Open", place: "New York", when: "Aug – Sep 2026", image: collectionEventImage("usopen"), href: "/tennis/grand-slams/us-open-finals-weekend" },
+      { id: "ausopen", title: "Australian Open", place: "Melbourne", when: "Jan 2027", image: collectionEventImage("ausopen"), href: "/tennis/grand-slams/australian-open-finals-weekend" },
+      { id: "atpfinals", title: "ATP Finals", place: "Turin", when: "Nov 2026", image: collectionEventImage("atpfinals"), href: "/tennis/atp-finals-week/atp-finals-finals-day" },
+      { id: "lavercup", title: "Laver Cup", place: "Europe", when: "Sep 2026", image: collectionEventImage("lavercup") },
     ],
   },
   {
@@ -155,45 +222,48 @@ export const collections: Collection[] = [
     image: photos.concert,
     tag: "Live entertainment",
     desc: "Your favourite artists, live performances and premium event packages.",
+    href: "/concerts",
     events: [
-      { id: "stadium-tours", title: "Stadium tours", place: "Worldwide", when: "2026 dates", image: shot("photo-1501386761578-eac5c94b800a") },
-      { id: "arena", title: "Arena shows", place: "UK & Europe", when: "2026 season", image: shot("photo-1470229722913-7c0e2dbbafd3") },
-      { id: "festivals", title: "Summer festivals", place: "Europe", when: "Jun – Aug 2026", image: shot("photo-1533174072545-7a4b6ad7a6c3") },
-      { id: "residency", title: "Las Vegas residencies", place: "Las Vegas", when: "2026 season", image: shot("photo-1514525253161-7a46d19cd819") },
-      { id: "westend", title: "West End & theatre", place: "London", when: "Year round", image: shot("photo-1507676184212-d03ab07a01bf") },
-      { id: "openair", title: "Open-air concerts", place: "Worldwide", when: "Summer 2026", image: shot("photo-1493225457124-a3eb161ffa5f") },
+      { id: "stadium-tours", title: "Stadium tours", place: "Worldwide", when: "2026 dates", image: collectionEventImage("stadium-tours"), href: "/concerts/stadium-tours/wembley-stadium-tour" },
+      { id: "arena", title: "Arena shows", place: "UK & Europe", when: "2026 season", image: collectionEventImage("arena"), href: "/concerts/arenas-and-theatre/the-o2-arena-show" },
+      { id: "festivals", title: "Summer festivals", place: "Europe", when: "Jun – Aug 2026", image: collectionEventImage("festivals"), href: "/concerts/stadium-tours/glastonbury-festival" },
+      { id: "residency", title: "Las Vegas residencies", place: "Las Vegas", when: "2026 season", image: collectionEventImage("residency"), href: "/concerts/arenas-and-theatre/las-vegas-residency" },
+      { id: "westend", title: "West End & theatre", place: "London", when: "Year round", image: collectionEventImage("westend"), href: "/concerts/arenas-and-theatre/west-end-at-drury-lane" },
+      { id: "openair", title: "Open-air concerts", place: "Worldwide", when: "Summer 2026", image: collectionEventImage("openair") },
     ],
   },
   {
     title: "Rugby",
     type: "rugby",
     place: "UK & international",
-    image: photos.stadium,
+    image: photos.rugby,
     tag: "Matchday experiences",
     desc: "International rugby and club occasions, with ticket and hosting options.",
+    href: "/rugby",
     events: [
-      { id: "sixnations", title: "Six Nations", place: "UK, Ireland, France & Italy", when: "Feb – Mar 2027", image: shot("photo-1517466787929-bc90951d0974") },
-      { id: "premiership", title: "Gallagher Premiership", place: "England", when: "2026/27 season", image: shot("photo-1517466787929-bc90951d0974") },
-      { id: "urc", title: "United Rugby Championship", place: "Europe & South Africa", when: "2026/27 season", image: shot("photo-1431324155629-1a6deb1dec8d") },
-      { id: "autumn", title: "Autumn internationals", place: "Twickenham & beyond", when: "Nov 2026", image: shot("photo-1480099225005-2513c8947aec") },
-      { id: "championscup", title: "Champions Cup", place: "Europe", when: "Finals 2027", image: shot("photo-1570498839593-e565b39455fc") },
-      { id: "lions", title: "British & Irish Lions", place: "Tour venues", when: "Summer 2027", image: shot("photo-1577223625816-7546f13df25d") },
+      { id: "sixnations", title: "Six Nations", place: "UK, Ireland, France & Italy", when: "Feb – Mar 2027", image: collectionEventImage("sixnations"), href: "/rugby/six-nations" },
+      { id: "premiership", title: "Gallagher Premiership", place: "England", when: "2026/27 season", image: collectionEventImage("premiership"), href: "/rugby/club-rugby/saracens-vs-leicester-tigers" },
+      { id: "urc", title: "United Rugby Championship", place: "Europe & South Africa", when: "2026/27 season", image: collectionEventImage("urc"), href: "/rugby/club-rugby/leinster-vs-munster" },
+      { id: "autumn", title: "Autumn internationals", place: "Twickenham & beyond", when: "Nov 2026", image: collectionEventImage("autumn"), href: "/rugby/six-nations/ireland-rugby-vs-france-rugby" },
+      { id: "championscup", title: "Champions Cup", place: "Europe", when: "Finals 2027", image: collectionEventImage("championscup"), href: "/rugby/club-rugby/northampton-vs-toulouse" },
+      { id: "lions", title: "British & Irish Lions", place: "Tour venues", when: "Summer 2027", image: collectionEventImage("lions") },
     ],
   },
   {
     title: "More sporting occasions",
     type: "other",
     place: "Events worldwide",
-    image: photos.stadium,
+    image: photos.more,
     tag: "Specialist requests",
     desc: "Boxing, NFL and other sporting occasions. Tell us your preferred event.",
+    href: "/more-sports",
     events: [
-      { id: "boxing", title: "World title boxing", place: "Las Vegas & London", when: "2026 cards", image: shot("photo-1549719386-74dfcbf7dbed") },
-      { id: "nfl", title: "NFL London", place: "Wembley & Tottenham", when: "Oct 2026", image: shot("photo-1566577134770-3d85bb3a9cc4") },
-      { id: "nba", title: "NBA", place: "USA", when: "2026/27 season", image: shot("photo-1574623452334-1e0ac2b3ccb4") },
-      { id: "golf", title: "The Open", place: "Royal Birkdale", when: "Jul 2026", image: shot("photo-1587174486073-ae5e5cff23aa") },
-      { id: "cricket", title: "The Ashes", place: "Australia", when: "Nov 2026 – Jan 2027", image: shot("photo-1531415074968-036ba1b575da") },
-      { id: "olympics", title: "Winter Olympics", place: "Milano Cortina", when: "Feb 2026", image: shot("photo-1551698618-1dfe5d97d256") },
+      { id: "boxing", title: "World title boxing", place: "Las Vegas & London", when: "2026 cards", image: collectionEventImage("boxing"), href: "/more-sports/world-title-boxing/world-title-fight-las-vegas" },
+      { id: "nfl", title: "NFL London", place: "Wembley & Tottenham", when: "Oct 2026", image: collectionEventImage("nfl"), href: "/more-sports/nfl-international/nfl-london-at-wembley" },
+      { id: "nba", title: "NBA", place: "USA", when: "2026/27 season", image: collectionEventImage("nba"), href: "/more-sports/nba-regular-season/new-york-knicks-at-msg" },
+      { id: "golf", title: "The Open", place: "Royal Birkdale", when: "Jul 2026", image: collectionEventImage("golf"), href: "/more-sports/the-open/the-open-final-round" },
+      { id: "cricket", title: "The Ashes", place: "Australia", when: "Nov 2026 – Jan 2027", image: collectionEventImage("cricket"), href: "/more-sports/the-ashes/australia-cricket-vs-england-cricket" },
+      { id: "olympics", title: "Winter Olympics", place: "Milano Cortina", when: "Feb 2026", image: collectionEventImage("olympics") },
     ],
   },
 ];
@@ -371,10 +441,13 @@ export const faqs = [
 ];
 
 export const footerLinks = [
-  { label: "Explore events", href: "#discover" },
-  { label: "Hospitality", href: "#hospitality" },
-  { label: "VIP services", href: "#services" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Social edit", href: "#social" },
-  { label: "Contact our team", href: "#request" },
+  { label: "Football tickets", href: "/football" },
+  { label: "Formula 1", href: "/formula-1" },
+  { label: "Tennis", href: "/tennis" },
+  { label: "Concerts", href: "/concerts" },
+  { label: "Rugby", href: "/rugby" },
+  { label: "More sports", href: "/more-sports" },
+  { label: "Explore events", href: "/#discover" },
+  { label: "Hospitality", href: "/#hospitality" },
+  { label: "Contact our team", href: "/#request" },
 ];
