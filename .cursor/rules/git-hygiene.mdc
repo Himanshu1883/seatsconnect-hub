@@ -1,0 +1,11 @@
+---
+description: Keep git commits limited to app source; ignore scrape and local artifacts
+alwaysApply: true
+---
+
+# Git hygiene
+
+- Do **not** commit unrelated local files: scrape downloads (`tmp-*`), editor folders (`.cursor/`, `.idea/`, `.vscode/`), logs, caches, `.next/`, `node_modules`, `.env*`, or zip/archives.
+- When adding new one-off scripts or tooling that writes files, add matching patterns to `.gitignore` in the same change.
+- Before suggesting a commit, run `git status` and exclude anything that is not application source, config, or intentional `public/` assets.
+- If ignored files were committed earlier, remove them from the index with `git rm --cached` (do not delete local copies unless the user asks).

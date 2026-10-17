@@ -40,3 +40,39 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Local dev / scrape artifacts (never commit) ---
+tmp-*
+/tmp-*
+scripts/.cache/
+scripts/output/
+
+# --- Editor & local tooling ---
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+.idea/
+.vscode/
+*.code-workspace
+
+# --- OS files ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Archives & local dumps ---
+*.zip
+*.7z
+*.rar
+*.tar.gz
+
+# --- Logs & build caches ---
+*.log
+.turbo
+.cache/
+.parcel-cache/
+
+# --- Test / E2E output ---
+playwright-report/
+test-results/
+blob-report/
